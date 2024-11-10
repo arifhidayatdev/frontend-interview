@@ -1,0 +1,79 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  --font-color: #333;
+  --background-color: #eee;
+}
+
+[data-theme='dark'] {
+  --font-color: #eee;
+  --background-color: #333;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  transition: background 0.3s ease-in;
+}
+
+a {
+  color: var(--font-color);
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--background-color);
+  color: var(--font-color);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.app-container {
+  color: var(--font-color);
+  background-color: var(--background-color);
+  min-height: 100vh;
+  transition: all ease-in-out 0.5s;
+}
+
+main {
+  margin: 0 auto;
+  padding: 32px 0;
+  width: 90%;
+  max-width: 1200px;
+}
+
+/* Header.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-right {
+  display: flex;
+  gap: 20px;
+}
+
+.header-link {
+  text-decoration: none;
+}
+
+.active-link {
+  text-decoration: underline;
+}
+
+.header-link:hover {
+  text-decoration: underline;
+}
