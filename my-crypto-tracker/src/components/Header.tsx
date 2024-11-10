@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import ToggleThemeButton from "./ToggleThemeButton";
+import routes from "../utils/data-routes";
 
 function Header() {
   return (
@@ -8,8 +9,19 @@ function Header() {
         <h1>Crypto Tracker</h1>
       </div>
       <div className="header-right">
-        <NavLink to="/" className={({ isActive }) => (isActive ? 'header-link active-link' : 'header-link')}>All Crypto</NavLink>
-        <NavLink to="/favorites" className={({ isActive }) => (isActive ? 'header-link active-link' : 'header-link')}>Favorites</NavLink>
+        {routes.map((route) => {
+          return (
+            <NavLink
+              key={route.id}
+              to={route.link}
+              className={({ isActive }) =>
+                isActive ? "header-link active-link" : "header-link"
+              }
+            >
+              {route.label}
+            </NavLink>
+          );
+        })}
         <ToggleThemeButton />
       </div>
     </header>
