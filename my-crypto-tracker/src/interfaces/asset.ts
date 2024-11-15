@@ -13,4 +13,5 @@ export interface IAsset {
 export interface IAllAssetResponse {
   total: number;
   list: IAsset[];
+  loading: boolean;
 }

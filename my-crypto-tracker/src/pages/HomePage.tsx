@@ -1,40 +1,33 @@
 import { useEffect, useState } from 'react';
-import { getAllAssets } from '../utils/network-data';
+import { useDispatch, useSelector } from 'react-redux';
 import { IAllAssetResponse } from '../interfaces/asset';
 import { List, Avatar, Skeleton, Button, Empty } from 'antd';
 import { StarOutlined, StarFilled } from '@ant-design/icons';
 import { formatToDollar } from '../helpers/formatToDollar';
+import { AppDispatch } from '../stores';
+import { asyncGetAllAssets } from '../stores/assets/action';
+import { toggleFavoriteAsset } from '../stores/assets/reducer';
 
 function HomePage() {
-  const [asset, setAsset] = useState<IAllAssetResponse>({ total: 0, list: []});
-  const [initLoading, setInitLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const assets: IAllAssetResponse = useSelector((states: any) => states.assets);
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    initialFetchAssets();
+    dispatch(asyncGetAllAssets(pageSize));
   }, [pageSize]);
-
-  const initialFetchAssets = async () => {
-    setAsset((prevState) => ({
-      ...prevState,
-      list: prevState.list.concat(new Array(5).fill({ loading: true })),
-    }));
-
-    const result = await getAllAssets(pageSize);
-    
-    if (result) {
-      setAsset(result);
-      setInitLoading(false);
-    }
-  }
 
   const onLoadMore = () => {
     setPageSize(prevState => prevState + 5);
     window.dispatchEvent(new Event('resize'));
   };
 
+  const handleFavoriteToggle = (assetId: number) => {
+    dispatch(toggleFavoriteAsset(assetId));
+  };
+
   const loadMore =
-    pageSize < asset.total ? (
+    pageSize < assets.total ? (
       <div
         style={{
           textAlign: 'center',
@@ -47,7 +40,17 @@ function HomePage() {
       </div>
     ) : null;
 
-  if (asset.total < 1 && !initLoading) {
+  // const onToggleFavorites = (id: number) => {
+  //   setAsset((prevState) => ({
+  //     ...prevState,
+  //     list: prevState.list.map((item) => 
+  //       item.id === id ? { ...item, is_favorite: !item.is_favorite } : item
+  //     )
+  //   }));
+  //   putFavorites(asset);
+  // };
+
+  if (assets.total < 1) {
     return (<Empty />)
   }
 
@@ -56,7 +59,7 @@ function HomePage() {
       <h2>All Crypto</h2>
       <List
         itemLayout="horizontal"
-        dataSource={asset.list}
+        dataSource={assets.list}
         loadMore={loadMore}
         renderItem={(item) => (
           <List.Item>
@@ -65,6 +68,7 @@ function HomePage() {
                 type="link"
                 icon={item.is_favorite ? <StarFilled /> : <StarOutlined />}
                 style={{ color: 'rgb(246, 184, 126)' }}
+                onClick={() => handleFavoriteToggle(item.id)}
               />
               <List.Item.Meta
                 avatar={<Avatar src={item.logo_url} />}
