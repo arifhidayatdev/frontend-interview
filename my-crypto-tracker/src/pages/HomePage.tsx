@@ -1,33 +1,52 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { IAllAssetResponse } from '../interfaces/asset';
 import { List, Avatar, Skeleton, Button, Empty } from 'antd';
 import { StarOutlined, StarFilled } from '@ant-design/icons';
 import { formatToDollar } from '../helpers/formatToDollar';
-import { AppDispatch } from '../stores';
-import { asyncGetAllAssets } from '../stores/assets/action';
-import { toggleFavoriteAsset } from '../stores/assets/reducer';
+import { putFavorites } from '../utils/local-data';
+import dummyAssetsData from '../helpers/dummyAssetsData';
+import api from '../utils/api';
 
 function HomePage() {
-  const dispatch = useDispatch<AppDispatch>();
-  const assets: IAllAssetResponse = useSelector((states: any) => states.assets);
-  const [pageSize, setPageSize] = useState(10);
+  const initialAsset = {
+    list: [...dummyAssetsData(10)],
+    loading: true,
+    total: 10
+  }
+
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [asset, setAsset] = useState<IAllAssetResponse>({ list: [], loading: true, total: 0 });
+  const [initialLoading, setInitialLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    dispatch(asyncGetAllAssets(pageSize));
+    asyncGetAllAssets();
   }, [pageSize]);
+
+  const asyncGetAllAssets = async () => {
+    setAsset((prevState) => ({
+      ...prevState,
+      list: [...prevState.list, ...dummyAssetsData(5)]
+    }));
+
+    const response = await api.getAllAssets(pageSize);
+    if (response) {
+      setAsset(response);
+      setInitialLoading(false);
+    } else {
+      setAsset((prevState) => ({
+        ...prevState,
+        list: prevState.list.slice(0, prevState.list.length - 5),
+      }));
+    }
+  }
 
   const onLoadMore = () => {
     setPageSize(prevState => prevState + 5);
     window.dispatchEvent(new Event('resize'));
   };
 
-  const handleFavoriteToggle = (assetId: number) => {
-    dispatch(toggleFavoriteAsset(assetId));
-  };
-
   const loadMore =
-    pageSize < assets.total ? (
+    asset.total > pageSize  ? (
       <div
         style={{
           textAlign: 'center',
@@ -36,21 +55,41 @@ function HomePage() {
           lineHeight: '32px',
         }}
       >
-        <Button onClick={onLoadMore}>loading more</Button>
+        <Button onClick={() => onLoadMore()}>loading more</Button>
       </div>
     ) : null;
 
-  // const onToggleFavorites = (id: number) => {
-  //   setAsset((prevState) => ({
-  //     ...prevState,
-  //     list: prevState.list.map((item) => 
-  //       item.id === id ? { ...item, is_favorite: !item.is_favorite } : item
-  //     )
-  //   }));
-  //   putFavorites(asset);
-  // };
+  const handleFavoriteToggle = (selectedId: number) => {
+    const newAsset = {
+      total: asset.total,
+      loading: false,
+      list: asset.list.map((item) => {
+        if (item.id === selectedId) {
+          item.is_favorite = !item.is_favorite;
+        }
+        return item;
+      })
+    }
+    setAsset(newAsset);
+    putFavorites(newAsset);
+  };
 
-  if (assets.total < 1) {
+  if (initialLoading) {
+    return (
+      <List
+        itemLayout="horizontal"
+        dataSource={initialAsset.list}
+        renderItem={(item) => (
+          <List.Item>
+            <Skeleton avatar title={false} loading={item.loading} active>
+            </Skeleton>
+          </List.Item>
+        )}
+      />
+    )
+  }
+
+  if (asset.total < 1) {
     return (<Empty />)
   }
 
@@ -59,7 +98,7 @@ function HomePage() {
       <h2>All Crypto</h2>
       <List
         itemLayout="horizontal"
-        dataSource={assets.list}
+        dataSource={asset.list}
         loadMore={loadMore}
         renderItem={(item) => (
           <List.Item>

@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import ToggleThemeButton from "./ToggleThemeButton";
-import routes from "../constanta/dataRoutes";
+import ROUTES from "../constanta/dataRoutes";
+import { IRoute } from "../interfaces/routes";
 
 function Header() {
   return (
@@ -9,7 +10,7 @@ function Header() {
         <h1>Crypto Tracker</h1>
       </div>
       <div className="header-right">
-        {routes.map((route) => {
+        {ROUTES.map((route: IRoute) => {
           return (
             <NavLink
               key={route.id}

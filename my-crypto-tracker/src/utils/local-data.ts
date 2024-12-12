@@ -6,7 +6,7 @@ function removeFavorites() {
 
 function getFavorites(): IAllAssetResponse {
   const favorites = localStorage.getItem('favorites');
-  return favorites ? JSON.parse(favorites) : [];
+  return favorites ? JSON.parse(favorites) : { list: [], loading: false, total: 0 };
 }
 
 function putFavorites(favorites: IAllAssetResponse) {

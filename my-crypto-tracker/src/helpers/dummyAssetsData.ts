@@ -10,6 +10,6 @@ const createDummyAsset = (id: number) => ({
   loading: true,
 });
 
-const dummyAssetsData = Array.from({ length: 5 }, (_, i) => createDummyAsset(i + 1));
+const dummyAssetsData = (length: number) => Array.from({ length }, (_, i) => createDummyAsset(i + 1));
 
 export default dummyAssetsData;

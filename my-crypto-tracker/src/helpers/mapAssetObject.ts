@@ -1,6 +1,9 @@
 import { IAsset } from "../interfaces/asset"
+import { getFavorites } from "../utils/local-data";
 
 export function mapAssetObject(assets: any[]): IAsset[] {
+  const favorite = getFavorites();
+
   return assets.map((asset) => {
     return {
       id: asset.ID,
@@ -10,7 +13,7 @@ export function mapAssetObject(assets: any[]): IAsset[] {
       logo_url: asset.LOGO_URL,
       price_usd: asset.PRICE_USD,
       total_mkt_cap_usd: asset.TOTAL_MKT_CAP_USD,
-      is_favorite: false,
+      is_favorite: favorite.list.some((fav) => fav.id === asset.ID && fav.is_favorite) || false,
       loading: false,
     }
   });
