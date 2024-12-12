@@ -1,7 +1,8 @@
-import { IAsset } from "../interfaces/asset"
+import { IAssetList } from "../interfaces/asset"
 import { getFavorites } from "../utils/local-data";
+import { IAssetAPI } from "../interfaces/asset";
 
-export function mapAssetObject(assets: any[]): IAsset[] {
+export function mapAssetObject(assets: IAssetAPI[]): IAssetList[] {
   const favorite = getFavorites();
 
   return assets.map((asset) => {
