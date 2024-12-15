@@ -1,5 +1,5 @@
-import { mapAssetObject } from "../../helpers/mapAssetObject";
-import { IAsset } from "../../interfaces/asset";
+import { mapAssetObject } from "../helpers/mapAssetObject";
+import { IAsset } from "../interfaces/asset";
 
 const BASE_URL = 'https://data-api.ccdata.io';
 
@@ -22,9 +22,8 @@ export async function getAllAssets(pageSize: number): Promise<IAsset | null> {
   } catch (error: unknown) {
     if (error instanceof Error) {
       alert(error);
-      // return error;
     }
+    alert('Unknown error occurred');
     return null;
-    // return new Error("Unknown error occurred");
   }
 }

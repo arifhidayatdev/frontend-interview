@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IAsset } from '../interfaces/asset';
-import api from '../utils/api';
+import api from '../api';
 import { List, Skeleton, Button, Empty } from 'antd';
 import { putFavorites } from '../utils/local-data';
 import dummyAssetsData from '../helpers/dummyAssetsData';
